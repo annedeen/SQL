@@ -1,0 +1,55 @@
+/*** Andin's Aesthetic Coloring Bookstore
+
+* Aesthetic styles are popular amongst our customer persona, middle class teens and young women on TikTok.
+
+* Creating coloring books based on these styles cater to this customer persona.
+
+* Data stored about these coloring books in our store include style, inventory, website, price, rating, and number of pages.
+
+* The following list are coloring books based on these styles:
+
+
+1. Instabaddie x Streetwear (34)
+2. Hippie x 70s (20)
+3. Granola Girl (43)
+4. Coconut Girl (77)
+5. Cottagecore x Coquette x Fairycore (75)
+6. Cyberpunk (85)
+7. Grunge (69)
+8. Dark Academia x Preppy (35)
+9. Downtown Girl (90)
+10. Y2K (29)
+11. Indie x Kidcore (87)
+12. Old Money x Rich Girl (62)
+13. E-Girl (29)
+14. Skater Girl (33)
+15. Subversive (2)
+***/
+
+CREATE TABLE bookstore
+
+(id INTEGER PRIMARY KEY, 
+coloring_book TEXT,
+inventory INTEGER,
+price INTEGER,
+rating INTEGER,
+number_of_pages INTEGER);
+
+INSERT INTO bookstore VALUES (1, "Instabaddie", 34, 4.99, 5,20);
+INSERT INTO bookstore VALUES (2, "Hippie x 70s", 20, 5.99, 4,30);
+INSERT INTO bookstore VALUES (3, "Granola Girl", 43, 3.99, 3,40);
+INSERT INTO bookstore VALUES (4, "Cocunut Girl", 77, 4.99, 4,50);
+INSERT INTO bookstore VALUES (5, "Cottagecore", 75, 3.99, 5,60);
+INSERT INTO bookstore VALUES (6, "Cyberpunk", 85, 5.99, 2,40);
+INSERT INTO bookstore VALUES (7, "Grunge", 69, 4.99, 5,55);
+INSERT INTO bookstore VALUES (8, "Dark Academia", 35, 3.99, 3,49);
+INSERT INTO bookstore VALUES (9, "Downtown Girl", 90, 3.59, 1,50);
+INSERT INTO bookstore VALUES (10, "Y2K", 29, 5.99, 3,30);
+INSERT INTO bookstore VALUES (11, "Indie", 87, 4.99, 5,50);
+INSERT INTO bookstore VALUES (12, "Old Money", 62, 3.99, 3,20);
+INSERT INTO bookstore VALUES (13, "E-Girl", 29, 6.99, 2,40);
+INSERT INTO bookstore VALUES (14, "Skater Girl", 33, 4.99, 3,35);
+
+SELECT id, coloring_book, inventory, rating from bookstore WHERE inventory < 50 GROUP BY rating;
+
+SELECT id, number_of_pages from bookstore WHERE number_of_pages <= 50 GROUP BY number_of_pages;
