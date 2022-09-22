@@ -1,0 +1,162 @@
+/**
+
+* Universal Music Group wants a complied list of their artists and their first week sales from the artists' last two albums
+
+Table 1: Artist Name, US Record Label, Genre
+
+Table 2: Most Recent Album Title, Date Released, Total Sales, Pure Sales
+
+Table 3: Second Most Recent Album Title, Date Released, Total Sales, Pure Sales
+
+**/
+
+CREATE TABLE artists 
+(id INTEGER PRIMARY KEY,
+artist_name TEXT,
+US_label TEXT,
+genre TEXT);
+
+INSERT INTO artists VALUES (1, "Taylor Swift","Republic", "Pop");
+INSERT INTO artists VALUES (2, "Harry Styles","Columbia","Pop");
+INSERT INTO artists VALUES (3, "Bad Bunny", "Rimes Entertainment","Latin, Rap");
+INSERT INTO artists VALUES (4, "Billie Elish", "Interscope","Alternative, Pop");
+INSERT INTO artists VALUES (5, "Drake", "OVO Sound", "Rap");
+
+CREATE TABLE penultimate_album
+(id INTEGER PRIMARY KEY,
+album_title TEXT,
+date_released TEXT,
+total_sales NUMERIC,
+pure_sales NUMERIC);
+
+INSERT INTO penultimate_album VALUES (1, "Fearless (Taylor's Version)", "09-04-2021", 291000, 179000);
+INSERT INTO penultimate_album VALUES (2, "Fine Line", "13-12-2019", 458000, 354000);
+INSERT INTO penultimate_album VALUES (3, "YHLQMDLG", "29-02-2020", 179000, 35000);
+INSERT INTO penultimate_album VALUES (4, "When We Fall Asleep, Where Do We Go?", "29-03-2019",313000, 170000);
+INSERT INTO penultimate_album VALUES (5, "Certified Lover Boy", "03-09-2021", 613000, 46000);
+
+CREATE TABLE latest_album
+(id INTEGER PRIMARY KEY,
+album_title TEXT,
+date_released TEXT,
+total_sales NUMERIC,
+pure_sales NUMERIC);
+
+INSERT INTO latest_album VALUES (1, "Red (Taylor's Version)", "12-11-2021", 605000, 369000);
+INSERT INTO latest_album VALUES (2, "Harry's House", "20-05-2022", 521000, 330000);
+INSERT INTO latest_album VALUES (3, "Un Verano Sin Ti", "06-05-2022", 274000, 12000);
+INSERT INTO latest_album VALUES (4, "Happier Than Ever", "30-07-2021", 238000, 154000);
+INSERT INTO latest_album VALUES (5, "Honestly, Nevermind", "17-06-2022", 204000, 11000);
+
+
+/** 
+
+* To get a get a complete visual table of the artists and the data from both of their recent records, complete a multiple join
+
+* We can attach the penultimate album id and the latest album id to the artist id
+
+**/
+
+SELECT *
+FROM artists
+JOIN penultimate_album AS pa
+ON artists.id = pa.id
+JOIN latest_album AS la
+ON artists.id = la.id;
+
+/** 
+
+* According to Forbes, pure sales usually account for more revenue than streaming. 
+
+*To find the percentage of pure sales from total sales for each album, multiply pure_sales * 100, then divide by total_sales
+
+
+**/
+
+SELECT artists.id, artists.artist_name, artists.genre, (pa.pure_sales * 100) / pa.total_sales as pa_pure_sales FROM artists
+JOIN penultimate_album AS pa
+ON artists.id = pa.id
+ORDER BY pa_pure_sales DESC;
+
+SELECT artists.id, artists.artist_name, artists.genre, (la.pure_sales * 100) / la.total_sales as la_pure_sales FROM artists
+JOIN latest_album AS la
+ON artists.id = la.id
+ORDER BY la_pure_sales DESC;
+
+/**
+In the second the last to album, Harry Styles mostly had pure sales (77%), while Drake started at the bottom with only 7%.
+
+For their latest albums, Billie Eilish took the crown for most pure sales (64%), while Bad Bunny only garnered a mere 4%.
+
+With this data we can start to see a trend of pop artists genereating predominately pure sales while rap artists most retain sales through streaming.
+
+When we have more data, we can develop a higher theory on this using the WHERE function and only displaying certain genres at at a time.
+
+For now, let's compare the precentage of pure sales. First we will join all three tables but only include the artists that have increased in pure sales.
+
+**/
+
+SELECT artists.id, artists.artist_name, (la.pure_sales * 100) / la.total_sales as la_pure_sales, (pa.pure_sales * 100) / pa.total_sales as pa_pure_sales FROM artists
+JOIN latest_album AS la
+ON artists.id = la.id
+JOIN penultimate_album AS pa
+ON artists.id = pa.id
+WHERE la_pure_sales >= pa_pure_sales;
+
+/**
+Billie Eilish is the only artist on this chart that has seen an increase in pure sales since her previous album. Now let's check in with the other artists that have seen a decrease in sales.**/
+
+SELECT artists.id, artists.artist_name, (la.pure_sales * 100) / la.total_sales as la_pure_sales, (pa.pure_sales * 100) / pa.total_sales as pa_pure_sales FROM artists
+JOIN latest_album AS la
+ON artists.id = la.id
+JOIN penultimate_album AS pa
+ON artists.id = pa.id
+WHERE la_pure_sales < pa_pure_sales;
+
+/**
+Taylor's and Drake's pure sales were still pretty consistent, whereas Harry and Bad Bunny saw a significant drop.
+
+Now, let's compare total first week sales, starting with artists who saw an increase in sales.
+
+**/
+
+SELECT artists.id, artists.artist_name, la.total_sales as la_total_sales, pa.total_sales as pa_total_sales FROM artists
+JOIN latest_album AS la
+ON artists.id = la.id
+JOIN penultimate_album AS pa
+ON artists.id = pa.id
+WHERE la_total_sales >= pa_total_sales;
+
+/**Taylor's first week sales nearly doubled while Harry and Bunny only saw increases by 100k**/
+
+SELECT artists.id, artists.artist_name, la.total_sales as la_total_sales, pa.total_sales as pa_total_sales FROM artists
+JOIN latest_album AS la
+ON artists.id = la.id
+JOIN penultimate_album AS pa
+ON artists.id = pa.id
+WHERE la_total_sales < pa_total_sales;
+
+/** Billie and Drake both saw a nearly 100k drop in sales for their latest albums. **/
+
+SELECT artists.id, artists.artist_name, artists.genre, pa.total_sales FROM artists
+JOIN penultimate_album AS pa
+ON artists.id = pa.id
+ORDER BY pa.total_sales DESC;
+
+SELECT artists.id, artists.artist_name, artists.genre, la.total_sales FROM artists
+JOIN latest_album AS la
+ON artists.id = la.id
+ORDER BY la.total_sales DESC;
+
+/**
+For their latest albums, Taylor comes in a number one with over 605k in sales, while Drake falls at the bottom with a little over 200k.
+
+In future analysis, we should analyse the following factors to demonstarte pattern in sales: 
+
+* genre and how it correlates to pure sales
+
+* subgenres of each album and how they correlate to increase or drop in sales
+
+* subtract pure_sales from total_sales to find the approximate number of sales garnered through streaming
+
+**/
