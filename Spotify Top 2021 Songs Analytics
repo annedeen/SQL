@@ -1,0 +1,32 @@
+
+/**Who had the most hits in 2021?**/
+SELECT artist_name, COUNT(artist_name) FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY COUNT(artist_name) DESC;
+/**Olivia Rodrigo and Doja Cat were tied the most hits, both having 4 songs on the chart**/
+
+/**It can be argued that most slow songs and acoustic sounding songs usually have low valence, or less postive sounding.
+Test this theory: Do acoustic sounding songs and/or slow-tempoed songs have less valence than average?**/
+SELECT track_name, acousticness, valence FROM BIT_DB.Spotifydata
+ORDER BY valence DESC;
+
+/** 4/4 time signatures most commonly used in popular music. Which songs do not have it and what time signatures do they have?**/
+SELECT artist_name, track_name, time_signature FROM BIT_DB.Spotifydata
+WHERE time_signature != 4;
+/**Giveon's Heartbreak Anniversary and Duncan Laurence's Arcade are both in the 3/4 time signature."
+
+SELECT track_name, speechiness, danceability FROM BIT_DB.Spotifydata
+HAVING danceability < AVG(danceability)
+ORDER BY speechiness LIMIT 10;
+
+SELECT track_name, popularity, duration FROM BIT_DB.Spotifydata
+WHERE popularity > 90;
+
+
+
+
+
+
+
+
+
