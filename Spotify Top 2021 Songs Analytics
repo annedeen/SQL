@@ -1,27 +1,30 @@
 
-/**Who had the most hits in 2021?**/
-SELECT artist_name, COUNT(artist_name) FROM BIT_DB.Spotifydata
+/**1. Who had the most hits in 2021?**/
+SELECT artist_name, COUNT(artist_name) FROM Spotifydata
 GROUP BY artist_name
 ORDER BY COUNT(artist_name) DESC;
 /**Olivia Rodrigo and Doja Cat were tied the most hits, both having 4 songs on the chart**/
 
-/**It can be argued that most slow songs and acoustic sounding songs usually have low valence, or less postive sounding.
-Test this theory: Do acoustic sounding songs and/or slow-tempoed songs have less valence than average?**/
-SELECT track_name, acousticness, valence FROM BIT_DB.Spotifydata
-ORDER BY valence DESC;
+/**2. For each artist that has at least two songs on the chart, list their most popular song and one of their less popular songs.**/
+SELECT a.artist_name, a.track_name, a.popularity, b.artist_name, b.track_name, b.popularity FROM Spotifydata a
+INNER JOIN Spotifydata b
+ON a.artist_name = b.artist_name
+WHERE a.popularity > b.popularity 
+GROUP BY a.artist_name
+ORDER BY a.popularity DESC;
 
-/** 4/4 time signatures most commonly used in popular music. Which songs do not have it and what time signatures do they have?**/
-SELECT artist_name, track_name, time_signature FROM BIT_DB.Spotifydata
+/**3. 4/4 time signatures most commonly used in popular music. Which songs do not have it and what time signatures do they have?**/
+SELECT artist_name, track_name, time_signature FROM Spotifydata
 WHERE time_signature != 4;
 /**Giveon's Heartbreak Anniversary and Duncan Laurence's Arcade are both in the 3/4 time signature."
 
-SELECT track_name, speechiness, danceability FROM BIT_DB.Spotifydata
-HAVING danceability < AVG(danceability)
-ORDER BY speechiness LIMIT 10;
+/*4. Duration of each song is calculated in milliseconds. What is the longest songs on the list? Calculate the apprixmate number of SECONDS.**/
+SELECT artist_name, track_name, (max(duration_ms))/1000 as duration_sec FROM Spotifydata
+/**Farruko's "Pepas" is the longest song on the chart, with a run time of 287 seconds.
 
-SELECT track_name, popularity, duration FROM BIT_DB.Spotifydata
-WHERE popularity > 90;
-
+/**What is the average danceability, energy,and valence of all the songs?**/
+SELECT AVG(danceability), AVG(energy), AVG(valence) FROM Spotifydata;
+/** Average danceability is 0.68572,  average energy is 0.64636, and average valence is 0.528884**/
 
 
 
