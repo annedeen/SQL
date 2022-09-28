@@ -22,9 +22,24 @@ WHERE time_signature != 4;
 SELECT artist_name, track_name, (max(duration_ms))/1000 as duration_sec FROM Spotifydata
 /**Farruko's "Pepas" is the longest song on the chart, with a run time of 287 seconds.
 
-/**What is the average danceability, energy,and valence of all the songs?**/
+/**5. What is the average danceability, energy, and valence of all the songs?**/
 SELECT AVG(danceability), AVG(energy), AVG(valence) FROM Spotifydata;
 /** Average danceability is 0.68572,  average energy is 0.64636, and average valence is 0.528884**/
+
+/***CTE Example***/
+
+/**Your task is to calculate the average popularity for the artists in the table. 
+Then, for every artist with an average popularity of 90 or above, you need to show their name, their average popularity, and label them as a “Top Star”. 
+How would you do this using a CTE?**/
+WITH avg_pop_table AS (
+SELECT p.artist_name, AVG(p.popularity) as avg_popularity
+FROM Spotifydata p
+GROUP BY p.artist_name 
+)
+
+SELECT artist_name, avg_popularity, "Top Star" as tag
+FROM avg_pop_table
+WHERE avg_popularity >=90;
 
 
 
