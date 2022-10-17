@@ -1,0 +1,83 @@
+/**1. Show Customers (their full names, customer ID, and country) who are not in the US. (Hint: != or <> can be used to say "is not equal to").**/
+SELECT CustomerID, FirstName, LastName, Country FROM customers
+WHERE Country <> "USA";
+
+/**2. Show only the Customers from Brazil.**/
+SELECT CustomerID, FirstName, LastName, Country FROM customers
+WHERE Country = "Brazil";
+
+/**3. Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.**/
+SELECT cust.FirstName, cust.LastName, invoices.InvoiceId, invoices.InvoiceDate, invoices.BillingCountry FROM customers cust
+JOIN invoices
+ON invoices.InvoiceId = cust.CustomerID
+WHERE invoices.BillingCountry = "Brazil";
+
+/**4. Show the Employees who are Sales Agents.**/
+SELECT FirstName, LastName, Title FROM employees
+WHERE Title = "Sales Support Agent";
+
+/**5. Find a unique/distinct list of billing countries from the Invoice table.**/
+SELECT distinct BillingCountry FROM invoices;
+
+/**6. Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.**/
+SELECT invoices.InvoiceId, employees.FirstName, employees.LastName as full_name FROM employees
+JOIN customers ON customers.SupportRepId = employees.EmployeeId
+JOIN invoices ON customers.CustomerId = invoices.CustomerId
+WHERE employees.Title = "Sales Support Agent"
+ORDER BY invoices.InvoiceId;
+
+/**7. Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.**/
+SELECT invoices.Total, customers.FirstName as cust_first_name, customers.LastName as cust_last_name, customers.Country, employees.FirstName as sa_first_name, employees.LastName as sa_last_name FROM employees
+JOIN customers ON customers.SupportRepId = employees.EmployeeId
+JOIN invoices ON customers.CustomerId = invoices.CustomerId
+WHERE employees.Title = "Sales Support Agent"
+GROUP BY customers.CustomerId;
+
+/**8.How many Invoices were there in 2009?**/
+SELECT COUNT(InvoiceID) FROM invoices
+WHERE InvoiceDate BETWEEN '2009-01-01 00:00:00' AND '2009-12-31 00:00:00';
+
+/**9. What are the total sales for 2009?**/
+SELECT SUM(Total) FROM invoices
+WHERE InvoiceDate BETWEEN '2009-01-01 00:00:00' AND '2009-12-31 00:00:00';
+
+/**10. Write a query that includes the purchased track name with each invoice line ID.**/
+SELECT invoice_items.InvoiceLineID, tracks.Name FROM invoice_items
+JOIN tracks ON tracks.TrackId = invoice_items.TrackId
+ORDER BY invoice_items.InvoiceLineID;
+
+/**11. Write a query that includes the purchased track name AND artist name with each invoice line ID.**/
+SELECT invoice_items.InvoiceLineID, tracks.Name as track_title, artists.Name as artist_name FROM invoice_items
+JOIN tracks ON tracks.TrackId = invoice_items.TrackId
+JOIN albums ON tracks.AlbumId = albums.AlbumId
+JOIN artists ON albums.ArtistId = artists.ArtistId
+ORDER BY invoice_items.InvoiceLineID;
+
+/**12. Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.**/
+SELECT tracks.Name as track_name, albums.Title as album_name, media_types.Name, genres.Name FROM tracks
+JOIN albums ON tracks.AlbumId = albums.AlbumId
+JOIN artists ON albums.ArtistId = artists.ArtistId
+JOIN media_types ON media_types.MediaTypeId = tracks.MediaTypeId
+JOIN genres ON genres.GenreId = tracks.GenreId;
+
+/**13. Show the total sales made by each sales agent.**/ 
+SELECT SUM(invoices.Total), employees.FirstName as sa_first_name, employees.LastName as sa_last_name FROM employees
+JOIN customers ON customers.SupportRepId = employees.EmployeeId
+JOIN invoices ON customers.CustomerId = invoices.CustomerId
+WHERE employees.Title LIKE "%Sales%Agent%"
+GROUP BY employees.EmployeeId;
+
+/**14. Which sales agent made the most dollars in sales in 2009?**/
+SELECT SUM(invoices.Total), employees.FirstName as sa_first_name, employees.LastName as sa_last_name FROM employees
+JOIN customers ON customers.SupportRepId = employees.EmployeeId
+JOIN invoices ON customers.CustomerId = invoices.CustomerId
+WHERE employees.Title LIKE "%Sales%Agent%" AND InvoiceDate >= '2009-01-01 00:00:00' AND InvoiceDate < '2010-01-01 00:00:00'
+GROUP BY employees.EmployeeId
+ORDER BY SUM(invoices.Total) DESC;
+/**Steve Johnson made the most money in 2009 with a total of $164.**/
+
+/**15. How much is is the longest song(s) in seconds? Include the album title and artist name **/
+SELECT tracks.Name, artists.Name as artist_name, albums.Title as album_title, MAX(tracks.Milliseconds)/60000 as minutes, tracks.UnitPrice FROM tracks
+JOIN albums ON tracks.AlbumId = albums.AlbumId
+JOIN artists ON albums.ArtistId = artists.ArtistId;
+/**"Occupation/Precipice" by Battlestar Galactica is the longest song in the catalogue and is priced at $1.99"**/
